@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="nameko-apscheduler",
-    version="0.0.1",
+    version="0.0.2",
     author="Pony Ma",
     author_email="mtf201013@gmail.com",
     description="nameko apscheduler dependency.",
