@@ -1,12 +1,18 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 setup(
     name="nameko-apscheduler",
-    version="0.0.2",
+    version="0.0.6",
     author="Pony Ma",
     author_email="mtf201013@gmail.com",
     description="nameko apscheduler dependency.",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     url="https://github.com/ma-pony/nameko-apscheduler",
+    packages=find_packages(exclude=['test', 'test.*']),
     install_requires=[
         "marshmallow>=3.6.0",
         "nameko>=3.0.0-rc8",
@@ -14,4 +20,8 @@ setup(
         "APScheduler>=3.6.3",
     ],
     zip_safe=True,
+    license='Apache License, Version 2.0',
+    classifiers=[
+        "Programming Language :: Python :: 3",
+    ]
 )
