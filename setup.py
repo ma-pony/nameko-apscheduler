@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="nameko-apscheduler",
-    version="0.0.6",
+    version="0.0.7",
     author="Pony Ma",
     author_email="mtf201013@gmail.com",
     description="nameko apscheduler dependency.",
@@ -14,7 +14,7 @@ setup(
     url="https://github.com/ma-pony/nameko-apscheduler",
     packages=find_packages(exclude=['test', 'test.*']),
     install_requires=[
-        "marshmallow>=3.6.0",
+        "marshmallow>=2.20.0",
         "nameko>=3.0.0-rc8",
         "kombu>=4.6.8",
         "APScheduler>=3.6.3",
