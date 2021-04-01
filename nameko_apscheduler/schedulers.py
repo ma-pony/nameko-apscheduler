@@ -9,8 +9,8 @@ from nameko.extensions import DependencyProvider
 from nameko.messaging import encode_to_headers, Publisher
 from nameko.standalone.events import get_event_exchange
 
-from schema import SchedulerSchema
-from utils import get, delete
+from nameko_apscheduler.schema import SchedulerSchema
+from nameko_apscheduler.utils import get, delete
 
 SERVICE_NAME = os.getenv("NAMEKO_APSCHEDULER_SERVICE_NAME", "nameko-apscheduler")
 
