@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="nameko-apscheduler",
-    version="0.0.8",
+    version="0.0.9",
     author="Pony Ma",
     author_email="mtf201013@gmail.com",
     description="nameko apscheduler dependency.",

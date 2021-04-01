@@ -12,7 +12,7 @@ from nameko.standalone.events import get_event_exchange
 from nameko_apscheduler.schema import SchedulerSchema
 from nameko_apscheduler.utils import get, delete
 
-SERVICE_NAME = os.getenv("NAMEKO_APSCHEDULER_SERVICE_NAME", "nameko-apscheduler")
+EXCHANGE_NAME = config["APSCHDULER"].get("exchange_name", "nameko-apscheduler")
 
 
 class SchedulerPublisher(Publisher):
@@ -51,7 +51,7 @@ class SchedulerPublisher(Publisher):
         )
 
 
-scheduler_publisher = SchedulerPublisher(exchange=get_event_exchange(SERVICE_NAME))
+scheduler_publisher = SchedulerPublisher(exchange=get_event_exchange(EXCHANGE_NAME))
 
 
 class Scheduler(DependencyProvider):

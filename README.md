@@ -31,6 +31,7 @@ Create a config file with essential settings:
 
 AMQP_URI: 'pyamqp://guest:guest@localhost'
 APSCHDULER:
+    exchange_name: nameko-apscheduler
     jobstores:
         default:
             type: sqlalchemy
