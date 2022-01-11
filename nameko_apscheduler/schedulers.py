@@ -1,12 +1,11 @@
-import os
-
 from apscheduler.schedulers.background import BackgroundScheduler
 from kombu.common import maybe_declare
 from nameko import config
+from nameko.amqp.publish import Publisher
 from nameko.amqp.publish import get_connection
-from nameko.constants import AMQP_SSL_CONFIG_KEY
+from nameko.constants import AMQP_SSL_CONFIG_KEY, AMQP_URI_CONFIG_KEY, DEFAULT_AMQP_URI
 from nameko.extensions import DependencyProvider
-from nameko.messaging import encode_to_headers, Publisher
+from nameko.messaging import encode_to_headers
 from nameko.standalone.events import get_event_exchange
 
 from nameko_apscheduler.schema import SchedulerSchema
@@ -15,11 +14,21 @@ from nameko_apscheduler.utils import get, delete
 EXCHANGE_NAME = config.get("APSCHDULER", {}).get("exchange_name", "nameko-apscheduler")
 
 
-class SchedulerPublisher(Publisher):
+class SchedulerPublisher:
+
+    publisher_cls = Publisher
+
     def __init__(self, exchange=None, declare=None, **publisher_options):
-        super(SchedulerPublisher, self).__init__(
-            exchange=exchange, declare=declare, **publisher_options
-        )
+        self.exchange = exchange
+        self.publisher_options = publisher_options
+
+        self.declare = declare[:] if declare is not None else []
+
+        if self.exchange:
+            self.declare.append(self.exchange)
+
+        default_uri = config.get(AMQP_URI_CONFIG_KEY, DEFAULT_AMQP_URI)
+        self.amqp_uri = self.publisher_options.pop("uri", default_uri)
         default_ssl = config.get(AMQP_SSL_CONFIG_KEY)
         ssl = self.publisher_options.pop("ssl", default_ssl)
 
@@ -51,11 +60,17 @@ class SchedulerPublisher(Publisher):
         )
 
 
-scheduler_publisher = SchedulerPublisher(exchange=get_event_exchange(EXCHANGE_NAME))
-
-
 class Scheduler(DependencyProvider):
     background_scheduler = BackgroundScheduler()
+    scheduler_publisher = None
+
+    @classmethod
+    def get_scheduler_publisher(cls):
+        if not cls.scheduler_publisher:
+            cls.scheduler_publisher = EXCHANGE_NAME(
+                exchange=get_event_exchange(EXCHANGE_NAME)
+            )
+        return cls.scheduler_publisher
 
     def __init__(self):
         self.extra_headers = None
@@ -189,7 +204,7 @@ class Scheduler(DependencyProvider):
         """
         return self.background_scheduler.add_job(
             id=str(job_id),
-            func=scheduler_publisher.publish,
+            func=self.get_scheduler_publisher().publish,
             trigger=trigger,
             name=name,
             kwargs={
